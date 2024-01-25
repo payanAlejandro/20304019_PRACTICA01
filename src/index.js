@@ -13,7 +13,8 @@ let tasks = [
 
 // Get all issues
 app.get('/issues', (req, res) => {
-  res.json();
+  var issues = [];
+  res.json(issues);
 });
 
 
