@@ -1,4 +1,4 @@
-const tasksRepository = require("./tasksRepository");
+const tasksRepository = require("./taskRepository");
 
 describe("pruebas", () => {
   // prueba unitaria
