@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "eslint": "^8.56.0",
+    "eslint-plugin-github": "^4.10.1",
     "jest": "^29.7.0",
     "supertest": "^6.3.4"
   }
