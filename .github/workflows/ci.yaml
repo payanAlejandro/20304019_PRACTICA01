@@ -1,0 +1,27 @@
+name: API CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  testing:
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4 #git clone into runner
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run unit integration tests
+        run: npm run test
+
+      - name: Run code linter
+        run: npm run lint
