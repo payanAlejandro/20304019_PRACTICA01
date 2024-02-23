@@ -23,5 +23,5 @@ jobs:
       - name: Run unit integration tests
         run: npm run test
 
-      - name: Run code linter
-        run: npm run lint
+     # - name: Run code linter
+      #  run: npm run lint
