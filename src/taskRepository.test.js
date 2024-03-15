@@ -23,7 +23,7 @@ describe("pruebas", () => {
     task = tasksRepository.getById(1);
 
     // Assert
-    expect(task.title == "Task 1").toBe(true);
+    expect(task.title === "Task 1").toBe(true);
   });
 
   test("Create a task", () => {
