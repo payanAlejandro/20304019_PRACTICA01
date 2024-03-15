@@ -8,9 +8,10 @@ on:
 
 jobs:
   testing:
+    runs-on: windows-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4 #git clone into runner
+        uses: actions/checkout@v4 # git clone into runner
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -20,8 +21,5 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Run unit integration tests
+      - name: Run unit and integration tests
         run: npm run test
-
-     # - name: Run code linter
-      #  run: npm run lint
