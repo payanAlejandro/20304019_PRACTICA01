@@ -51,7 +51,7 @@ jobs:
       - name: App service auth
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'luisitooodev-api-test'
+          app-name: 'alejandropayan-api'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           images: '${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest'
       
