@@ -1,10 +1,11 @@
-name: API CI AND CD
+
+name: CI CD
 
 on:
   push:
-    branches: [main, develop, devlop_test_push]
+    branches: [main, dev]
   pull_request:
-    branches: [main, develop, devlop_test_push]
+    branches: [main, dev]
 
 jobs:
   testing:
@@ -46,12 +47,11 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest
-
   
       - name: App service auth
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'luisitooodev-api-test'
+          app-name: 'alejandropayan-api'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           images: '${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest'
       
@@ -62,7 +62,6 @@ jobs:
           inlineScript: |
             az login --service-principal -u "${{ secrets.APP_ID_AZURE }}" -p "${{ secrets.APP_PASSWORD_AZURE }}" --tenant "${{ secrets.APP_TENANT_AZURE }}"
             az webapp restart --name "${{ secrets.WEB_APPNAME }}" --resource-group "${{ secrets.RESOURCE_GROUP_NAME }}"
-
 
   security:
     runs-on: ubuntu-latest
@@ -81,4 +80,5 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_MESSAGE: 'CI/CD Completed :D'
+          SLACK_MESSAGE: 'CI/CD Completed'
+
