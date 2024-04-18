@@ -2,9 +2,9 @@ name: CI CD
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main, develop, devlop_test_push]
   pull_request:
-    branches: [main, dev]
+    branches: [main, develop, devlop_test_push]
 
 jobs:
   testing:
@@ -46,7 +46,7 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest
-  
+
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -84,5 +84,4 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_MESSAGE: 'CI/CD Completed'
-
+          SLACK_MESSAGE: 'CI/CD Completed :D'
