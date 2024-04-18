@@ -44,7 +44,40 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest
           
+      - name: App service auth
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'alejandropayan-api'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          images: '${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest'
+      
+      - name: Azure restart image
+        uses: azure/cli@v2
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az login --service-principal -u "${{ secrets.APP_ID_AZURE }}" -p "${{ secrets.APP_PASSWORD_AZURE }}" --tenant "${{ secrets.APP_TENANT_AZURE }}"
+            az webapp restart --name "${{ secrets.WEB_APPNAME }}" --resource-group "${{ secrets.RESOURCE_GROUP_NAME }}"
 
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+  CI_CD_success_notification:
+    needs: [testing, build, security]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify success on Slack
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_MESSAGE: 'CI/CD Integration completed'
 
 
 
