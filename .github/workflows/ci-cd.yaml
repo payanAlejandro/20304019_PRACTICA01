@@ -1,4 +1,4 @@
-name: API CI/CD
+name: CI CD
 
 on:
   push:
@@ -8,19 +8,19 @@ on:
 
 jobs:
   testing:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2 # git clone into runner
-
+        uses: actions/checkout@v4 # git clone into runner
+      
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
-
+          node-version: 20.x
+      
       - name: Install Dependencies
         run: npm install
-
+      
       - name: Run unit and integration tests
         run: npm run test
 
@@ -28,22 +28,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v2
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest
-          
+  
       - name: App service auth
         uses: azure/webapps-deploy@v2
         with:
@@ -59,6 +62,15 @@ jobs:
             az login --service-principal -u "${{ secrets.APP_ID_AZURE }}" -p "${{ secrets.APP_PASSWORD_AZURE }}" --tenant "${{ secrets.APP_TENANT_AZURE }}"
             az webapp restart --name "${{ secrets.WEB_APPNAME }}" --resource-group "${{ secrets.RESOURCE_GROUP_NAME }}"
 
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
   CI_CD_success_notification:
     needs: [testing, build, security]
     runs-on: ubuntu-latest
@@ -67,5 +79,4 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_MESSAGE: 'CI/CD Integration completed'
-          
+          SLACK_MESSAGE: 'CI/CD Completed'
