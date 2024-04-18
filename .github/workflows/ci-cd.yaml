@@ -58,26 +58,16 @@ jobs:
           inlineScript: |
             az login --service-principal -u "${{ secrets.APP_ID_AZURE }}" -p "${{ secrets.APP_PASSWORD_AZURE }}" --tenant "${{ secrets.APP_TENANT_AZURE }}"
             az webapp restart --name "${{ secrets.WEB_APPNAME }}" --resource-group "${{ secrets.RESOURCE_GROUP_NAME }}"
-  
+
+
   security:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      - name: Install Snyk CLI
-        run: npm install -g snyk
-
-      - name: Authenticate Snyk
-        run: snyk auth ${{ secrets.SNYK_TOKEN }}
-
+      - uses: actions/checkout@master
       - name: Run Snyk to check for vulnerabilities
-        run: snyk test
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   CI_CD_success_notification:
     needs: [testing, build, security]
@@ -88,4 +78,5 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_MESSAGE: 'CI/CD Integration completed'
+
           
