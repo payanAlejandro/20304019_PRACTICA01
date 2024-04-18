@@ -1,4 +1,4 @@
-name: API CI AND CD
+name: CI CD
 
 on:
   push:
@@ -47,11 +47,15 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest
 
-  
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: App service auth
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'luisitooodev-api-test'
+          app-name: 'alejandropayan-api'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           images: '${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest'
       
@@ -62,7 +66,6 @@ jobs:
           inlineScript: |
             az login --service-principal -u "${{ secrets.APP_ID_AZURE }}" -p "${{ secrets.APP_PASSWORD_AZURE }}" --tenant "${{ secrets.APP_TENANT_AZURE }}"
             az webapp restart --name "${{ secrets.WEB_APPNAME }}" --resource-group "${{ secrets.RESOURCE_GROUP_NAME }}"
-
 
   security:
     runs-on: ubuntu-latest
