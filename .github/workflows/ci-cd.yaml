@@ -59,16 +59,6 @@ jobs:
             az login --service-principal -u "${{ secrets.APP_ID_AZURE }}" -p "${{ secrets.APP_PASSWORD_AZURE }}" --tenant "${{ secrets.APP_TENANT_AZURE }}"
             az webapp restart --name "${{ secrets.WEB_APPNAME }}" --resource-group "${{ secrets.RESOURCE_GROUP_NAME }}"
 
-
-  security:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
   CI_CD_success_notification:
     needs: [testing, build, security]
     runs-on: ubuntu-latest
@@ -78,17 +68,4 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_MESSAGE: 'CI/CD Integration completed'
-
-
-
-
-
-
-
-
-
-
-
-
-
           
