@@ -78,5 +78,5 @@ jobs:
       - name: Notify success on Slack
         uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_MESSAGE: 'CI/CD Completed'
+          SLACK_WEBHOOK: ${{secrets.SLACK_WEBHOOK }}
+          SLACK_MESSAGE: 'CI/CD Completed :D'
