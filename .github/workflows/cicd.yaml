@@ -46,18 +46,20 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest
-  
-      - name: Azure Login
-        uses: azure/login@v1
+
+      - name: App service auth
+        uses: azure/webapps-deploy@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          app-name: 'alejandropayan-api'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE}}
+          images: '${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest'
       
       - name: Azure restart image
         uses: azure/cli@v2
         with:
           azcliversion: 2.30.0
           inlineScript: |
-            az login --service-principal -u "${{ secrets.APP_ID_AZURE }}" -p "${{ secrets.APP_PASSWORD_AZURE }}" --tenant "${{ secrets.APP_TENANT_AZURE }}"
+            az login --service-principal -u "${{ secrets.APP_ID }}" -p "${{ secrets.APP_PASSWORD }}" --tenant "${{ secrets.APP_TENANT }}"
             az webapp restart --name "${{ secrets.WEB_APPNAME }}" --resource-group "${{ secrets.RESOURCE_GROUP_NAME }}"
 
   security:
